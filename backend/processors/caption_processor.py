@@ -2,7 +2,7 @@ import os
 import whisper
 import cv2
 import numpy as np
-from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from moviepy import VideoFileClip, TextClip, CompositeVideoClip
 from core.config import settings
 
 class CaptionProcessor:
@@ -44,13 +44,18 @@ class CaptionProcessor:
                 continue
 
         if not caption_clips:
-            print("No captions generated.")
-            return video_path
+            print("No captions generated or failed to create text clips. copying original.")
+            video.close()
+            import shutil
+            shutil.copy2(video_path, output_path)
+            return output_path
 
         final_video = CompositeVideoClip([video] + caption_clips)
         final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
         
         video.close()
+        for c in caption_clips:
+            c.close()
         final_video.close()
         
         return output_path

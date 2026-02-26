@@ -2,7 +2,7 @@ import requests
 import time
 import os
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:8001"
 
 def test_flow():
     print("1. Checking Health...")
@@ -20,7 +20,12 @@ def test_flow():
     with open(test_video, "rb") as f:
         r = requests.post(f"{BASE_URL}/upload", files={"file": f})
     
-    upload_data = r.json()
+    try:
+        upload_data = r.json()
+    except Exception as e:
+        print(f"Failed to decode JSON: {r.text}")
+        raise e
+
     video_id = upload_data["video_id"]
     print(f"Uploaded: {video_id}")
 
@@ -29,7 +34,14 @@ def test_flow():
         "prompt": "Make this an energetic reel: remove silence and add auto captions",
         "video_id": video_id
     })
-    print(r.json())
+    
+    try:
+        edit_data = r.json()
+    except Exception as e:
+        print(f"Failed to decode /edit response JSON: {r.text}")
+        raise e
+    
+    print(edit_data)
 
     print("\n4. Polling Status...")
     for _ in range(10):

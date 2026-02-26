@@ -1,7 +1,7 @@
 import os
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
-from moviepy.editor import VideoFileClip, AudioFileClip
+from moviepy import VideoFileClip, AudioFileClip, concatenate_videoclips
 from core.config import settings
 
 class AudioProcessor:
@@ -30,10 +30,12 @@ class AudioProcessor:
         
         # Combine non-silent chunks
         if not chunks:
-            print("No silence detected or silence threshold too high.")
+            print("No silence detected or silence threshold too high. copying original to output.")
             video.close()
+            import shutil
+            shutil.copy2(video_path, output_path)
             os.remove(temp_audio)
-            return video_path
+            return output_path
 
         combined_audio = sum(chunks)
         temp_processed_audio = os.path.join(self.processed_dir, "temp_processed_audio.wav")
@@ -57,16 +59,26 @@ class AudioProcessor:
             end_s = min(video.duration, (end_ms + keep_silence) / 1000.0)
             clips.append(video.subclip(start_s, end_s))
             
-        final_video = concatenate_videoclips(clips) if clips else video
+        if not clips:
+            print("No clips to assemble, copying original.")
+            video.close()
+            import shutil
+            shutil.copy2(video_path, output_path)
+            os.remove(temp_audio)
+            os.remove(temp_processed_audio)
+            return output_path
+
+        final_video = concatenate_videoclips(clips)
         final_video.write_videofile(output_path, codec="libx264", audio_codec="aac")
         
         # Cleanup
         video.close()
-        if clips: final_video.close()
+        for c in clips:
+            c.close()
+        final_video.close()
         os.remove(temp_audio)
         os.remove(temp_processed_audio)
         
         return output_path
 
-from moviepy.editor import concatenate_videoclips
 audio_processor = AudioProcessor()

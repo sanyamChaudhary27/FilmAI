@@ -2,7 +2,7 @@ import os
 import cv2
 import mediapipe as mp
 import numpy as np
-from moviepy.editor import VideoFileClip, VideoClip
+from moviepy import VideoFileClip, VideoClip
 from core.config import settings
 
 class BackgroundRemover:

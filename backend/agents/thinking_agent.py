@@ -5,10 +5,24 @@ import json
 
 class VideoAgent:
     def __init__(self):
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        if settings.GEMINI_API_KEY:
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
+        else:
+            self.model = None
 
     async def generate_plan(self, prompt: str, video_metadata: dict) -> EditingPlan:
+        if not self.model:
+            print("WARNING: GEMINI_API_KEY missing. Returning mock plan.")
+            return EditingPlan(
+                video_id="mock",
+                original_prompt=prompt,
+                actions=[
+                    EditAction(action="remove_silence", parameters={"video_id": "mock"}),
+                    EditAction(action="auto_captions", parameters={"video_id": "mock"})
+                ],
+                estimated_duration=10.0
+            )
         system_prompt = f"""
         You are an expert video editor AI. Your task is to translate user requests into a structured editing plan.
         The user has provided a video with metadata: {json.dumps(video_metadata)}.

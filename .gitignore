@@ -21,3 +21,11 @@ data/processed/
 node_modules/
 dist/
 .next/
+
+# Logs and Temp files
+*.log
+server_log.txt
+error_details.txt
+backend/data/processed/*.mp4
+backend/data/uploads/*.mp4
+test_input.mp4

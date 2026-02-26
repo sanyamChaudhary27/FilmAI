@@ -4,7 +4,7 @@ This document provides all the details needed for Kanishka to build the dashboar
 
 ## Base URL
 
-`http://localhost:8000`
+`http://localhost:8001`
 
 ## Endpoints
 
