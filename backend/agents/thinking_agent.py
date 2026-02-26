@@ -1,0 +1,44 @@
+import google.generativeai as genai
+from core.config import settings
+from agents.models import EditingPlan, EditAction
+import json
+
+class VideoAgent:
+    def __init__(self):
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        self.model = genai.GenerativeModel('gemini-1.5-flash')
+
+    async def generate_plan(self, prompt: str, video_metadata: dict) -> EditingPlan:
+        system_prompt = f"""
+        You are an expert video editor AI. Your task is to translate user requests into a structured editing plan.
+        The user has provided a video with metadata: {json.dumps(video_metadata)}.
+        
+        Available actions:
+        1. trim: cut a segment (requires start_time, end_time)
+        2. remove_bg: remove background from the video
+        3. caption: generate and add burnt-in captions
+        4. grayscale: convert to black and white
+        
+        Respond ONLY with a JSON object matching this structure:
+        {{
+            "video_id": "current_id",
+            "original_prompt": "{prompt}",
+            "actions": [
+                {{"action": "action_name", "start_time": 0.0, "end_time": 10.0, "parameters": {{}}}}
+            ],
+            "estimated_duration": 10.0
+        }}
+        """
+        
+        response = self.model.generate_content(f"{system_prompt}\n\nUser Request: {prompt}")
+        
+        # Basic parsing logic (can be made more robust)
+        try:
+            plan_data = json.loads(response.text.strip().replace('```json', '').replace('```', ''))
+            return EditingPlan(**plan_data)
+        except Exception as e:
+            print(f"Error parsing AI response: {e}")
+            # Fallback to a simple plan or error handling
+            return EditingPlan(video_id="error", original_prompt=prompt, actions=[])
+
+video_agent = VideoAgent()

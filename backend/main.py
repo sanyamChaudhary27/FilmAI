@@ -6,8 +6,8 @@ load_dotenv()
 
 def main():
     print("Starting FilmAI Backend...")
-    # This could also initialize agents or run tasks
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
+    # Run from the current directory, looking into backend.api.main
+    uvicorn.run("backend.api.main:app", host="0.0.0.0", port=8000, reload=True)
 
 if __name__ == "__main__":
     main()
