@@ -13,11 +13,12 @@ FilmAI uses advanced AI agents to automate the video editing process. Just give 
 
 ## 📁 Structure
 
-- `agents/`: AI logic and task planning.
-- `api/`: FastAPI server.
-- `processors/`: Video and Audio editing engines.
-- `core/`: Config and utilities.
-- `frontend/`: React/Next.js application.
+- `backend/`:
+  - `agents/`: AI logic and task planning.
+  - `api/`: FastAPI server.
+  - `processors/`: Video and Audio editing engines.
+  - `core/`: Config and utilities.
+- `frontend/`: React/Next.js application (handled by Kanishka).
 
 ## 🛠️ Tech Stack
 
