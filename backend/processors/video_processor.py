@@ -3,6 +3,9 @@ from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip
 from core.config import settings
 from core.status import task_store
 from agents.models import EditingPlan, EditAction
+from processors.audio_processor import audio_processor
+from processors.caption_processor import caption_processor
+from processors.vision_processor import vision_processor
 
 class VideoProcessor:
     def __init__(self):
@@ -52,9 +55,21 @@ class VideoProcessor:
             
         elif action.action == "remove_bg":
             # This will be handled by the specialized BackgroundRemover
-            # For now, we just pass through or return a placeholder
-            print("Background removal requested, calling BackgroundRemover...")
+            print("Background removal requested...")
             return clip
+            
+        elif action.action == "remove_silence":
+            print("Silence removal requested...")
+            # Pydub/MoviePy integration for silence removal
+            temp_path = os.path.join(self.processed_dir, f"silence_{action.parameters.get('video_id')}.mp4")
+            audio_processor.remove_silence(clip.filename, temp_path)
+            return VideoFileClip(temp_path)
+            
+        elif action.action == "auto_captions":
+            print("Auto-captions requested...")
+            temp_path = os.path.join(self.processed_dir, f"captions_{action.parameters.get('video_id')}.mp4")
+            caption_processor.generate_captions(clip.filename, temp_path)
+            return VideoFileClip(temp_path)
 
         return clip
 

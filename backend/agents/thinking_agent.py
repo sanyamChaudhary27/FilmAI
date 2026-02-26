@@ -16,8 +16,14 @@ class VideoAgent:
         Available actions:
         1. trim: cut a segment (requires start_time, end_time)
         2. remove_bg: remove background from the video
-        3. caption: generate and add burnt-in captions
-        4. grayscale: convert to black and white
+        3. auto_captions: generate and add burnt-in subtitles
+        4. remove_silence: automatically cut out dead air/silence
+        5. grayscale: convert to black and white
+        
+        Creative Styles:
+        - "energetic": Add fast transitions, remove silence, and use bold captions.
+        - "professional": Clean cuts, audio normalization, and subtle captions.
+        - "cinematic": Grayscale or high-contrast, slow transitions.
         
         Respond ONLY with a JSON object matching this structure:
         {{

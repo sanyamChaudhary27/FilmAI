@@ -24,9 +24,9 @@ def test_flow():
     video_id = upload_data["video_id"]
     print(f"Uploaded: {video_id}")
 
-    print("\n3. Testing Edit (Agent Thinking)...")
+    print("\n3. Testing Professional Edit (Agent thinking 'energetic' style)...")
     r = requests.post(f"{BASE_URL}/edit", params={
-        "prompt": "trim the first 2 seconds and make it grayscale",
+        "prompt": "Make this an energetic reel: remove silence and add auto captions",
         "video_id": video_id
     })
     print(r.json())
