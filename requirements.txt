@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+moviepy
+ffmpeg-python
+openai-whisper
+google-generativeai
+python-dotenv
+mediapipe
+pydantic
+aiofiles

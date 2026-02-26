@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Video Data
+data/uploads/
+data/processed/
+*.mp4
+*.mkv
+*.mov
+
+# IDE
+.vscode/
+.idea/
+
+# Node (if any in root)
+node_modules/
+dist/
+.next/
