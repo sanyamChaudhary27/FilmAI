@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE = 'http://localhost:8001';
 
 export interface TaskStatus {
     video_id: string;
@@ -8,52 +8,34 @@ export interface TaskStatus {
     progress: number;
     output_url?: string;
     error?: string;
-}
-
-export interface EditPlan {
-    video_id: string;
-    actions: {
-        action: string;
-        start_time: number;
-        end_time: number;
-        metadata?: any;
-    }[];
-}
-
-export interface EditResponse {
-    task_id: string;
-    plan: EditPlan;
-    status: string;
+    plan?: any;
+    logs?: string[];
 }
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE,
+    timeout: 10000,
 });
 
 export const uploadVideo = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post<{ video_id: string; filename: string; status: string }>('/upload', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
+    const resp = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
     });
-    return response.data;
-};
-
-export const getStatus = async (videoId: string) => {
-    const response = await api.get<TaskStatus>(`/status/${videoId}`);
-    return response.data;
+    return resp.data; // { video_id, filename, status }
 };
 
 export const editVideo = async (videoId: string, prompt: string) => {
-    const response = await api.post<EditResponse>('/edit', null, {
-        params: {
-            prompt,
-            video_id: videoId,
-        },
+    const resp = await api.post('/edit', null, {
+        params: { video_id: videoId, prompt }
     });
-    return response.data;
+    return resp.data; // { task_id, plan, status }
+};
+
+export const getStatus = async (videoId: string) => {
+    const resp = await api.get(`/status/${videoId}`);
+    return resp.data as TaskStatus;
 };
 
 export default api;
