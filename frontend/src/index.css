@@ -1,109 +1,111 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap');
 
 :root {
-  --font-main: 'Inter', sans-serif;
-  --font-heading: 'Outfit', sans-serif;
+  --bg-black: #050505;
+  --bg-darker: #0d0d0d;
+  --bg-dark: #141414;
+  --bg-card: #202020;
+  --bg-hover: #2a2a2a;
   
-  /* Color Palette - High Fidelity Cyan/Blue Theme */
-  --bg-dark: #07080a;
-  --bg-card: #111114;
-  --bg-sidebar: #0e0e11;
-  --primary: #00C2FF;
-  --primary-glow: rgba(0, 194, 255, 0.3);
-  --secondary: #8b5cf6;
-  --accent: #10b981;
-  --text-main: #f8fafc;
-  --text-muted: #64748b;
-  --border: rgba(255, 255, 255, 0.08);
-  --glass: rgba(17, 17, 20, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --primary: #f52d2d; /* AMD Red-ish */
+  --primary-glow: rgba(245, 45, 45, 0.4);
+  --secondary: #1a73e8;
+  --accent: #9d4edd;
   
-  /* Layout */
-  --sidebar-left-width: 280px;
-  --sidebar-right-width: 320px;
-  --topbar-height: 64px;
+  --text-main: #ffffff;
+  --text-dim: #a0a0a0;
+  --text-dark: #606060;
+  
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(255, 255, 255, 0.15);
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: var(--font-main);
-  background-color: var(--bg-dark);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-black);
   color: var(--text-main);
-  min-height: 100vh;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-heading);
+h1, h2, h3, .brand {
+  font-family: 'Outfit', sans-serif;
 }
 
-/* Glassmorphism utility */
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
 .glass {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-light);
 }
 
-/* Scrollbar Styling */
+.glow-btn {
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  font-weight: 600;
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.glow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--primary-glow);
+}
+
+.glow-btn:active {
+  transform: translateY(0);
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: #333;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: #444;
 }
 
-/* Global Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* Primary Button Styling */
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px var(--primary-glow);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-glow);
-  opacity: 0.9;
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-#root {
-  display: flex;
-  min-height: 100vh;
+.animate-in {
+  animation: fadeIn 0.4s ease forwards;
 }
