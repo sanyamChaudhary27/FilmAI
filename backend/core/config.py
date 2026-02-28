@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     
     # FFmpeg Path
-    FFMPEG_PATH: str = os.getenv("FFMPEG_PATH", "C:\\Users\\HP\\OneDrive\\FilmAI\\myenv\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe")
+    FFMPEG_PATH: str = ""
     
     # Storage Paths
     UPLOAD_DIR: str = os.path.join("backend", "data", "uploads")
@@ -22,6 +22,10 @@ class Settings(BaseSettings):
         case_sensitive = True
 
 settings = Settings()
+
+# Dynamic FFmpeg detection
+import imageio_ffmpeg
+settings.FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
 
 # Ensure directories exist
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
