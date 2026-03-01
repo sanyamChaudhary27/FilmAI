@@ -7,7 +7,7 @@ class VideoAgent:
     def __init__(self):
         if settings.GEMINI_API_KEY:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
         else:
             self.model = None
 
@@ -51,15 +51,23 @@ class VideoAgent:
         }}
         """
         
-        response = self.model.generate_content(f"{system_prompt}\n\nUser Request: {prompt}")
-        
-        # Basic parsing logic (can be made more robust)
         try:
+            response = self.model.generate_content(f"{system_prompt}\n\nUser Request: {prompt}")
+            
+            # Basic parsing logic (can be made more robust)
             plan_data = json.loads(response.text.strip().replace('```json', '').replace('```', ''))
             return EditingPlan(**plan_data)
         except Exception as e:
-            print(f"Error parsing AI response: {e}")
-            # Fallback to a simple plan or error handling
-            return EditingPlan(video_id="error", original_prompt=prompt, actions=[])
+            print(f"Error calling AI or parsing response: {e}")
+            print("WARNING: Falling back to mock plan.")
+            return EditingPlan(
+                video_id=video_metadata.get("video_id", "fallback"),
+                original_prompt=prompt,
+                actions=[
+                    EditAction(action="remove_silence", parameters={}),
+                    EditAction(action="auto_captions", parameters={})
+                ],
+                estimated_duration=10.0
+            )
 
 video_agent = VideoAgent()

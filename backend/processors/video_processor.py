@@ -80,13 +80,13 @@ class VideoProcessor:
         elif action.action == "remove_silence":
             print("Silence removal requested...")
             temp_path = os.path.join(self.processed_dir, f"silence_{video_id}.mp4")
-            audio_processor.remove_silence(clip.filename, temp_path)
+            audio_processor.remove_silence(clip, temp_path)
             return VideoFileClip(temp_path)
             
         elif action.action == "auto_captions":
             print("Auto-captions requested...")
             temp_path = os.path.join(self.processed_dir, f"captions_{video_id}.mp4")
-            caption_processor.generate_captions(clip.filename, temp_path)
+            caption_processor.generate_captions(clip, temp_path)
             return VideoFileClip(temp_path)
 
         elif action.action == "remove_bg":

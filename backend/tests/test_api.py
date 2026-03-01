@@ -9,9 +9,13 @@ def test_flow():
     r = requests.get(f"{BASE_URL}/")
     print(r.json())
 
-    # Create a dummy video if it doesn't exist for testing
+    import shutil
+    # Use a real valid video for testing rather than junk bytes
     test_video = "test_input.mp4"
-    if not os.path.exists(test_video):
+    if not os.path.exists(test_video) and os.path.exists("../real_test_input.mp4"):
+        print("Copying real test video file...")
+        shutil.copy2("../real_test_input.mp4", test_video)
+    elif not os.path.exists(test_video):
         print("Creating dummy video file...")
         with open(test_video, "wb") as f:
             f.write(os.urandom(1024 * 1024)) # 1MB junk data

@@ -11,19 +11,39 @@ class CaptionProcessor:
         self.model = whisper.load_model(model_size)
         self.processed_dir = settings.PROCESSED_DIR
 
-    def generate_captions(self, video_path: str, output_path: str):
+    def generate_captions(self, video: VideoFileClip, output_path: str):
         """
-        Generates and burns captions into the video.
+        Generates and burns captions into the video clip.
         """
-        print(f"Generating captions for {video_path}...")
+        print(f"Generating captions for video clip...")
         
         # 1. Transcribe audio
-        result = self.model.transcribe(video_path)
-        segments = result['segments']
+        if not video.audio:
+            print("No audio track found, returning original video.")
+            video.write_videofile(output_path, codec="libx264")
+            return output_path
+            
+        # Extract audio to a temp file for Whisper
+        import uuid
+        temp_audio = os.path.join(self.processed_dir, f"temp_caption_audio_{uuid.uuid4().hex}.wav")
+        video.audio.write_audiofile(temp_audio, verbose=False, logger=None)
+        
+        try:
+            result = self.model.transcribe(temp_audio)
+        except Exception as e:
+            print(f"Whisper transcription failed: {e}")
+            if os.path.exists(temp_audio):
+                os.remove(temp_audio)
+            video.write_videofile(output_path, codec="libx264", audio_codec="aac")
+            return output_path
+            
+        segments = result.get('segments', [])
+        
+        # Cleanup audio
+        if os.path.exists(temp_audio):
+            os.remove(temp_audio)
         
         # 2. Add captions to video
-        video = VideoFileClip(video_path)
-        
         caption_clips = []
         for segment in segments:
             start = segment['start']
@@ -44,10 +64,8 @@ class CaptionProcessor:
                 continue
 
         if not caption_clips:
-            print("No captions generated or failed to create text clips. copying original.")
-            video.close()
-            import shutil
-            shutil.copy2(video_path, output_path)
+            print("No captions generated or failed to create text clips. writing original to output.")
+            video.write_videofile(output_path, codec="libx264", audio_codec="aac")
             return output_path
 
         final_video = CompositeVideoClip([video] + caption_clips)
